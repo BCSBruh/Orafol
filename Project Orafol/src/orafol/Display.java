@@ -1,7 +1,13 @@
 package orafol;
 
+import orafol.graphics.Render;
+import orafol.graphics.Screen;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 
 public class Display extends Canvas implements Runnable {
     public static final int WIDTH = 800;
@@ -9,8 +15,22 @@ public class Display extends Canvas implements Runnable {
 
     public static final String TITLE = "Orafol 3D View";
 
+    private int[] pixels;
+
     private Thread thread;
     private boolean running = false;
+
+    private Render render;
+    private Screen screen;
+
+    private BufferedImage img;
+
+    public Display() {
+        screen = new Screen(WIDTH, HEIGHT);
+        img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+
+        pixels = ((DataBufferInt)img.getRaster().getDataBuffer()).getData();
+    }
 
     private void start() {
         //Want this to only run on initialization
@@ -36,7 +56,34 @@ public class Display extends Canvas implements Runnable {
 
     @Override
     public void run() {
+        while (running) {
+            tick();
+            render();
+        }
 
+    }
+
+    //tick() handles frames/time
+    private void tick() {
+
+    }
+
+    //render() renders the scene
+    private void render() {
+        BufferStrategy bs = this.getBufferStrategy();
+        if (bs == null) {
+            createBufferStrategy(3);
+            return;
+        }
+
+        screen.render();
+
+        System.arraycopy(screen.pixels, 0, pixels, 0, WIDTH * HEIGHT);
+
+        Graphics g = bs.getDrawGraphics();
+        g.drawImage(img, 0, 0, WIDTH, HEIGHT, null);
+        g.dispose();
+        bs.show();
     }
 
     public static void main(String[] args) {
