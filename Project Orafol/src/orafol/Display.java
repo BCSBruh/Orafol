@@ -100,4 +100,12 @@ public class Display extends Canvas implements Runnable {
 
         model.start();
     }
+
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    public int getHeight() {
+        return HEIGHT;
+    }
 }
