@@ -37,6 +37,7 @@ public class Display extends Canvas implements Runnable {
         if (running)
             return;
 
+        running = true;
         thread = new Thread(this);
         thread.start();
     }
@@ -54,13 +55,11 @@ public class Display extends Canvas implements Runnable {
         }
     }
 
-    @Override
     public void run() {
         while (running) {
             tick();
             render();
         }
-
     }
 
     //tick() handles frames/time
